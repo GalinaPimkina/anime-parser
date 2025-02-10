@@ -46,24 +46,39 @@ headers = {
 
 # из полученного json-файла беру название аниме, привожу к общему виду, убирая лишние символы.
 
-# with open("shiki.json", "r", encoding="utf-8") as file:
-#     all_anime = json.load(file)
-#
-#     for anime_title, anime_href in all_anime.items():
-#         lst = [")", "("]
-#         for symbol in anime_title:
-#             if symbol not in lst and not symbol.isalnum():
-#                 anime_title = anime_title.replace(symbol, "_")
-#
-#         if "__" in anime_title:
-#             anime_title = anime_title.replace("__", "_")
-#
-#         #буду проходиться по каждой ссылке на конкретное аниме, сохраняю страницу на каждое аниме, чтобы не было нагрузки на сайт
-#
-#         req = requests.get(url=anime_href, headers=headers)
-#         src = req.text
-#
-#         with open(f"animes/{anime_title}.html", "w", encoding="utf-8") as file:
-#             file.write(src)
+
+with open("shiki.json", "r", encoding="utf-8") as file:
+    all_anime = json.load(file)
+
+    for anime_title, anime_href in all_anime.items():
+        lst = [")", "("]
+        for symbol in anime_title:
+            if symbol not in lst and not symbol.isalnum():
+                anime_title = anime_title.replace(symbol, "_")
+
+        if "__" in anime_title:
+            anime_title = anime_title.replace("__", "_")
+
+        #буду проходиться по каждой ссылке на конкретное аниме, сохраняю страницу на каждое аниме, чтобы не было нагрузки на сайт
+
+        req = requests.get(url=anime_href, headers=headers)
+        src = req.text
+
+        with open(f"animes/{anime_title}.html", "w", encoding="utf-8") as file:
+            file.write(src)
+
+        with open(f"animes/{anime_title}.html", "r", encoding="utf-8") as file:
+            src = file.read()
+
+        soup = BeautifulSoup(src, "lxml")
+
+        ru_en_title = soup.find("h1").text
+        ru_title = ru_en_title[:ru_en_title.find("/")].rstrip()
+        en_title = ru_en_title[ru_en_title.find("/")+1:].lstrip()
+
+
+
+
+
 
 
