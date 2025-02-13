@@ -75,6 +75,74 @@ with open("shiki.json", "r", encoding="utf-8") as file:
         ru_en_title = soup.find("h1").text
         ru_title = ru_en_title[:ru_en_title.find("/")].rstrip()
         en_title = ru_en_title[ru_en_title.find("/")+1:].lstrip()
+        image_href = soup.find("div", class_="b-db_entry-poster").get("data-href")
+
+        # print(ru_title)
+        # print(en_title)
+        # print(image_href)
+
+        format_type = soup.find("div", class_="b-entry-info").find(class_="line-container")
+        format_type_key = format_type.find(class_="key").text[:-1]
+        format_type_value = format_type.find(class_="value").text
+        # print(format_type_key, " - ", format_type_value)
+
+        # отсюда поиск пойдет двумя разными путями, т.к. в описании каких-то аниме отсутствует пункт "Эпизоды", если он там 1
+        # ЭПИЗОДЫ
+        episodes = format_type.find_next(class_="line-container")
+        # если есть пункт "Эпизоды":
+        if episodes.find(class_="key").text[:-1] == "Эпизоды":
+            episodes_key = episodes.find(class_="key").text[:-1]
+            episodes_value = episodes.find(class_="value").text
+            print(episodes_key, "-", episodes_value)
+
+            # ДЛИТЕЛЬНОСТЬ ЭПИЗОДА
+            len_episodes = episodes.find_next(class_="line-container")
+            len_episodes_key = len_episodes.find(class_="key").text[:-1]
+            len_episodes_value = len_episodes.find(class_="value").text
+            print(len_episodes_key, "  ---  ", len_episodes_value)
+
+            # СТАТУС ВЫХОДА
+            status = len_episodes.find_next(class_="line-container")
+            status_key = status.find(class_="key").text[:-1]
+            status_value = status.find(class_="value")
+            # статус-вышло, выходит и тд.
+            status_value_tag = status_value.find(class_="b-anime_status_tag").get("data-text")
+            # даты выхода
+            status_value_date = status.find(class_="value").text
+            print(status_key, status_value_tag, status_value_date)
+            print(ru_title)
+            print("----"*10)
+
+
+        else:
+            # ЭПИЗОДЫ / если в графе пусто, значит эпизод 1, искусственно добавляем
+            episodes_key = "Эпизоды"
+            episodes_value = "1"
+            print(episodes_key, "-", episodes_value)
+
+            # ДЛИТЕЛЬНОСТЬ ЭПИЗОДА
+            len_episodes = format_type.find_next(class_="line-container")
+            # дублирование кода -----
+            len_episodes_key = len_episodes.find(class_="key").text[:-1]
+            len_episodes_value = len_episodes.find(class_="value").text
+            print(len_episodes_key, "  ---  ", len_episodes_value)
+
+            # СТАТУС ВЫХОДА
+            status = len_episodes.find_next(class_="line-container")
+            status_key = status.find(class_="key").text[:-1]
+            status_value = status.find(class_="value")
+            # статус-вышло, выходит и тд.
+            status_value_tag = status_value.find(class_="b-anime_status_tag").get("data-text")
+            # даты выхода
+            status_value_date = status.find(class_="value").text
+            print(status_key, status_value_tag, status_value_date)
+            print(ru_title)
+            print("----" * 10)
+
+
+
+
+
 
 
 
